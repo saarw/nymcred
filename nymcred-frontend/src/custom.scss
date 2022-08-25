@@ -1,0 +1,10 @@
+// Order is important, variables come first, then bootstrap, then the theme customization
+@import "_variables";
+ 
+@import "~bootstrap/scss/bootstrap";
+ 
+// @import "_bootswatch.scss";
+
+body {
+  height: 100vh;
+}

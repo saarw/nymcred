@@ -1,0 +1,9 @@
+version: '3'
+services:
+  db:
+    image: postgres:10-alpine
+    volumes:
+    - ./postgres/db-data:/var/lib/postgresql/data
+    - ./postgres/script/create_user_database.sql:/docker-entrypoint-initdb.d/create_user_database.sql
+    ports:
+    - 5432:5432
