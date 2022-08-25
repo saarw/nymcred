@@ -9,7 +9,7 @@ export const ValidateUser = (props: {
     const { userToken } = useParams(); 
     const [validationOk, setValidationOk] = useState(false);
 
-    const secret = '';
+    const secret = '"                                "';
     const payer = Keypair.fromSecretKey(new Uint8Array(JSON.parse(secret)));
 
 
