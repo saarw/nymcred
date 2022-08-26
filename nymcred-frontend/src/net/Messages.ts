@@ -1,4 +1,5 @@
-export interface SelectCredentialRequest {
-    publicKeyBase58: string;
+export interface ValidationRequest {
     credential: string;
+    ownerPublicKey: string;
+    signature: string;
 }

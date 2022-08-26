@@ -1,6 +1,7 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { PublicKey, Signer, Transaction, Connection, sendAndConfirmTransaction, Keypair, clusterApiUrl} from '@solana/web3.js';
-import { getAccount } from '@solana/spl-token'
+import { getAccount } from '@solana/spl-token';
+import nacl = require('tweetnacl');
 
 import * as NYMCRED_KEYPAIR from './nymcred-keypair.json';
 
@@ -18,26 +19,35 @@ export class AppService {
     
     ) {}
 
-  async createTransaction(user: string, splTokenAddress: PublicKey, userPublicKey: PublicKey): Promise<Buffer> {
+  async createTransaction(
+    userKey: PublicKey, 
+    splTokenAddress: PublicKey, 
+    tokenOwnerPublicKey: PublicKey,
+    signature: string): Promise<Buffer> {
     this.logger.log('Getting token account ' + splTokenAddress);
     const tokenProgram = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
     const splAccount = await getAccount(this.mainNet, splTokenAddress, undefined, tokenProgram);
-    if (!splAccount.owner.equals(userPublicKey)) {
-      this.logger.warn(userPublicKey.toBase58() + ' did not own token ' + splTokenAddress.toBase58())
+    if (!splAccount.owner.equals(tokenOwnerPublicKey)) {
+      this.logger.warn(tokenOwnerPublicKey.toBase58() + ' did not own token ' + splTokenAddress.toBase58());
       throw new HttpException('Unauthenticated', 403);
     } 
+
+    if (nacl.sign.detached.verify(splTokenAddress.toBytes(), Buffer.from(signature, 'base64'), tokenOwnerPublicKey.toBytes())) {
+      this.logger.warn('Failed to verify signature for token ' + splTokenAddress.toBase58());
+      throw new HttpException('Unauthenticated', 403);
+    }
 
     const {blockhash, lastValidBlockHeight} = await this.connection.getLatestBlockhash();
     const transaction = new Transaction({blockhash, lastValidBlockHeight, feePayer: this.signerKeypair.publicKey});
     transaction.add({
       keys: [
         {pubkey: this.signerKeypair.publicKey, isSigner: true, isWritable: true}, 
-        {pubkey: userPublicKey, isSigner: true, isWritable: false}
+        {pubkey: userKey, isSigner: true, isWritable: false}
       ],
       programId: this.signerKeypair.publicKey,
     });
     transaction.partialSign(this.signerKeypair);
-    this.logger.log('Signed transaction for user ' + user);
+    this.logger.log('Signed transaction for user ' + userKey);
     return transaction.serialize({requireAllSignatures: false, verifySignatures: false});
   }
 

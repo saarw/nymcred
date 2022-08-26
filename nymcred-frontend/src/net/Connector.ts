@@ -1,7 +1,7 @@
 import { Session } from "./Session";
 import { HttpMethod, sendFetch } from "./internal";
 import { Api, GetUserResult } from "./Api";
-import { SelectCredentialRequest } from "./Messages";
+import { ValidationRequest } from "./Messages";
 
 /** 
  * A connection has an authentication status. Authenticated connections have session functionality 
@@ -16,8 +16,8 @@ export type Connection = {
 export class Connector {
   constructor(private globalErrorHandler: (err: string) => void) {}
 
-  public validateCredential(body: SelectCredentialRequest, successHandler: (rsp: {data: string}) => void) {
-    sendFetch(HttpMethod.POST, '/validate', body, successHandler, this.globalErrorHandler)
+  public validateCredential(publicKey: string, body: ValidationRequest, successHandler: (rsp: {data: string}) => void) {
+    sendFetch(HttpMethod.POST, '/validate/' + publicKey, body, successHandler, this.globalErrorHandler)
   }
 
   public initializeSession(resultHandler: (session: Connection) => void) {

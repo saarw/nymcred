@@ -9,29 +9,29 @@ import Profile from './user/Profile';
 import { Api } from './net/Api';
 import { StatusButton } from './user/StatusButton';
 import { ValidateUser } from './ValidateUser';
-import { clusterApiUrl } from '@solana/web3.js';
+import { clusterApiUrl, Keypair } from '@solana/web3.js';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
-const UnauthenticatedContent = (props: {
-  connector: Connector,
-  reinitializeSession: () => void
-}) => {
-  return <div className="container">
-    <Routes>
-        <Route path="/validate/:userToken" element={<ValidateUser connector={props.connector}/>} />
-        <Route path="/finishLogin" element={<FinishLogin connector={props.connector} onLoginSuccess={() => {
-          props.reinitializeSession();
-        }}/>} />
-        <Route path="/register" element={<LoginOrRegister connector={props.connector} isRegister={true}/>} />
-        <Route path="/login" element={<LoginOrRegister connector={props.connector} isRegister={false}/>} />
-        <Route path="*" element={<div>
-          <p>Not logged in. Please <Link to="/login">log in</Link> or <Link to="/register">sign up for a new account</Link></p>
-          </div>}/>
-      </Routes>
-  </div>;
-}; 
+// const UnauthenticatedContent = (props: {
+//   connector: Connector,
+//   reinitializeSession: () => void
+// }) => {
+//   return <div className="container">
+//     <Routes>
+//         <Route path="/validate/:userToken" element={<ValidateUser connector={props.connector}/>} />
+//         <Route path="/finishLogin" element={<FinishLogin connector={props.connector} onLoginSuccess={() => {
+//           props.reinitializeSession();
+//         }}/>} />
+//         <Route path="/register" element={<LoginOrRegister connector={props.connector} isRegister={true}/>} />
+//         <Route path="/login" element={<LoginOrRegister connector={props.connector} isRegister={false}/>} />
+//         <Route path="*" element={<div>
+//           <p>Not logged in. Please <Link to="/login">log in</Link> or <Link to="/register">sign up for a new account</Link></p>
+//           </div>}/>
+//       </Routes>
+//   </div>;
+// }; 
 
 const SidebarMenu = () => {
   return <div className="d-flex flex-column mx-3">
@@ -51,6 +51,9 @@ const AuthenticatedContent = () => {
     </div>
   </div>;
 }
+
+const secret = require('./user-keypair.json');
+const keypair = Keypair.fromSecretKey(new Uint8Array(secret));
 
 function App() {
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -80,14 +83,17 @@ function App() {
     <div className="d-flex flex-column">
       <header>
         <header className="d-flex flex-row justify-content-between">
-          <Link to="/" className="text-decoration-none"><h1>Nymcred</h1></Link><WalletMultiButton />
+          <Link to="/" className="text-decoration-none"><h1>Nymcred</h1></Link>
         </header>
       </header>
       <ErrorAlert message={errorMessage} dismissed={() => setErrorMessage(undefined)}/>
-      
-                    
-      <ValidateUser connector={connector}/>
-      
+      <Routes>
+        <Route path="/validate/:userKey" element={<ValidateUser connector={connector} userSecretKey={keypair.secretKey}/>} />
+        <Route path="*" element={<div>
+          <p>User with public key {keypair.publicKey.toBase58()} wants to provide a credential</p>
+          <Link to={'/validate/' + keypair.publicKey.toBase58()}><button className="btn btn-primary">Start validation</button></Link>
+          </div>}/>
+      </Routes> 
       {/* {!session ? 
         <UnauthenticatedContent connector={connector} reinitializeSession={() => connector.initializeSession(connectionToSession)} /> :
         <SessionContext.Provider value={session}>
