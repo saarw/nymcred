@@ -1,6 +1,7 @@
 # Ignore configs that may contain secrets
 *.env
 ormconfig.json
+src/nymcred-keypair.json
 
 # Created by .ignore support plugin (hsz.mobi)
 ### JetBrains template

@@ -9,6 +9,10 @@ import Profile from './user/Profile';
 import { Api } from './net/Api';
 import { StatusButton } from './user/StatusButton';
 import { ValidateUser } from './ValidateUser';
+import { clusterApiUrl } from '@solana/web3.js';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
+import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 const UnauthenticatedContent = (props: {
   connector: Connector,
@@ -65,22 +69,35 @@ function App() {
     // setSession(MockSession);
   }, []);
 
+  const endpoint = clusterApiUrl('mainnet-beta')
+  const wallet = new PhantomWalletAdapter()
+
   return (
+    <ConnectionProvider endpoint={endpoint}>
+    <WalletProvider wallets={[wallet]}>
+      <WalletModalProvider>
     <HashRouter>
     <div className="d-flex flex-column">
       <header>
         <header className="d-flex flex-row justify-content-between">
-          <Link to="/"><h1>MyApp</h1></Link><StatusButton userName={session != null ? session.user.name : undefined}/>
+          <Link to="/" className="text-decoration-none"><h1>Nymcred</h1></Link><WalletMultiButton />
         </header>
       </header>
       <ErrorAlert message={errorMessage} dismissed={() => setErrorMessage(undefined)}/>
-      {!session ? 
+      
+                    
+      <ValidateUser connector={connector}/>
+      
+      {/* {!session ? 
         <UnauthenticatedContent connector={connector} reinitializeSession={() => connector.initializeSession(connectionToSession)} /> :
         <SessionContext.Provider value={session}>
           <AuthenticatedContent />
-        </SessionContext.Provider>}
+        </SessionContext.Provider>} */}
     </div>
     </HashRouter>
+    </WalletModalProvider>
+    </WalletProvider>
+        </ConnectionProvider>
   );
 }
 

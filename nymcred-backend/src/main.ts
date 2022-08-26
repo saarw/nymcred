@@ -22,7 +22,6 @@ async function bootstrap() {
   });
   app.use(cookieParser());
   const csrf = csurf({cookie: {
-      key: '_csrf',
       maxAge: 7 * 24 * 3600
     }});
   app.use(function (req: any, res: any, next: any) {
