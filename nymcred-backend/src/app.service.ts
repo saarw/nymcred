@@ -80,11 +80,17 @@ export class AppService {
     const transaction = Transaction.from(Buffer.from(signedTransactionDataB64, 'base64'));
     this.logger.log('Sending and confirming transaction')
     // return JSON.stringify(await simulateTransaction(this.connection, transaction));
-    const sigOrErr = await sendAndConfirmRawTransaction(this.connection, transaction.serialize())
+    const result = await sendAndConfirmRawTransaction(this.connection, transaction.serialize(), 
+      {commitment: 'recent', preflightCommitment: 'recent'})
+      .then(() => {
+        return JSON.stringify({
+          success: 'Proof stored at ' + transaction.instructions[0].keys[2].pubkey.toBase58() // the PDA
+        }, null, 2);
+      })
       .catch((err) => {
         return JSON.stringify(err, null, 2);
       });
-    return sigOrErr;
+    return result;
   }
 
 }
