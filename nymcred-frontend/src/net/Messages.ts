@@ -3,3 +3,7 @@ export interface ValidationRequest {
     ownerPublicKey: string;
     signature: string;
 }
+
+export interface SendTransactionRequest {
+    signedTransaction: string;
+}

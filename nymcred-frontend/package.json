@@ -17,6 +17,7 @@
     "@types/react-bootstrap": "^0.32.30",
     "@types/react-dom": "^18.0.6",
     "bootstrap": "^5.2.0",
+    "bs58": "^5.0.0",
     "crypto-browserify": "^3.12.0",
     "node-sass": "^7.0.1",
     "process": "^0.11.10",

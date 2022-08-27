@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("AddXJKhehfvJSTD8R3Y3V2thd9shvqUcULbi2kuE4rZF");
 
 #[program]
 pub mod nymcred_ws {
@@ -28,8 +28,8 @@ pub struct MintCredential<'info> {
     #[account(
     init,
     payer = service,
-    space = 32,
-    seeds = [b"credential", service.key().as_ref(), credential_id.as_ref()],
+    space = 40,
+    seeds = [b"credential", service.key().as_ref(), &credential_id.as_bytes()],
     bump
     )]
     pub credential: Account<'info, Credential>,

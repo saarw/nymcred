@@ -20,6 +20,9 @@ export const ValidateUser = (props: {
     const [tokenAddress, setTokenAddress] = useState('9GihPakYConxRfWnuQj1Le83rTkxNaGKUNF9Xxz8on72');
     const [ownerPublicKey, setOwnerPublicKey] = useState(wallet.publicKey?.toBase58());
     const [ownerSignature, setOwnerSignature] = useState<string>();
+    const [signedTransaction, setSignedTransaction] = useState<string>('');
+    const [transactionSignature, setTransactionSignature] = useState<string>('');
+
 
     useEffect(() => {
         setOwnerPublicKey(wallet.publicKey?.toBase58());
@@ -28,12 +31,13 @@ export const ValidateUser = (props: {
     return <div className="container">
         <h1>{'Validate ' + userKey}</h1>
         <div>Provide proof of ownership for a credential.</div>
-        <Form className="mb-3">
+        <Form>
             <Form.Group>
                 <Form.Label>NFT token account</Form.Label>
                 <Form.Control type="input" value={tokenAddress} onChange={(e) => setTokenAddress(e.currentTarget.value)}/>
             </Form.Group>
             <Form.Group>
+
                 <Form.Label>Owner </Form.Label>
                 {wallet.publicKey == null ? 
                     <div><WalletMultiButton /></div> : <div>
@@ -48,8 +52,9 @@ export const ValidateUser = (props: {
                     </div>
                 }
             </Form.Group>
-        </Form>
-        {!validationOk ? <button className="btn btn-primary" onClick={async () => {
+            <Form.Group className="mt-3">
+
+        {signedTransaction.length === 0 ? <button className="btn btn-primary" onClick={async () => {
             await wallet.connect();
             const publicKey = wallet.publicKey;
             if (publicKey == null) {
@@ -68,10 +73,29 @@ export const ValidateUser = (props: {
                     publicKey: new PublicKey(userKey!),
                     secretKey: props.userSecretKey
                 });
-                console.log(tx);
-                console.log(tx.serialize({verifySignatures: true, requireAllSignatures: true}));
-                setValidationOk(true); 
+                setSignedTransaction(tx.serialize({verifySignatures: true, requireAllSignatures: true}).toString('base64'));
             });
         }}>Start Validation</button> : <div>Validated</div>}
+        </Form.Group>
+        <Form.Group className="mt-3">
+            <Form.Label>Signed Transaction </Form.Label>
+            <Form.Control type="input" value={signedTransaction} onChange={(e) => setSignedTransaction(e.currentTarget.value)} readOnly={true}/>
+            <button className="btn btn-primary" disabled={signedTransaction.length === 0}
+                onClick={() => {
+                    props.connector.sendSignedTransaction({signedTransaction}, (rsp) => {
+                        console.log(rsp.data);
+                        setTransactionSignature(rsp.data);
+                    });
+                }}>Send Signed Transactions</button>
+        </Form.Group>
+        <Form.Group className="mt-3">
+            <Form.Label>Transaction Confirmation Signature</Form.Label>
+            <Form.Control type="input" value={transactionSignature} readOnly={true}/>
+        </Form.Group>
+        </Form>
+        
+        
+        
+
     </div>
 }

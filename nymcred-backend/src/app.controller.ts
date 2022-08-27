@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { PublicKey } from '@solana/web3.js';
-import { ValidationRequest } from './Messages';
+import { SendTransactionRequest, ValidationRequest } from './Messages';
 
 interface Rsp<T> {
   data: T
@@ -29,6 +29,13 @@ export class AppController {
         new PublicKey(body.ownerPublicKey),
         body.signature)
       ).toString('base64')
+    };
+  }
+
+  @Post('/sendTransaction')
+  async sendTransaction(@Body() body: SendTransactionRequest): Promise<Rsp<string>> {
+    return { 
+      data: await this.appService.submitSignedTransaction(body.signedTransaction)
     };
   }
 
