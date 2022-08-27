@@ -89,9 +89,10 @@ function App() {
       <ErrorAlert message={errorMessage} dismissed={() => setErrorMessage(undefined)}/>
       <Routes>
         <Route path="/validate/:userKey" element={<ValidateUser connector={connector} userSecretKey={keypair.secretKey}/>} />
-        <Route path="*" element={<div>
-          <p>User with public key {keypair.publicKey.toBase58()} wants to provide a credential</p>
-          <Link to={'/validate/' + keypair.publicKey.toBase58()}><button className="btn btn-primary">Start validation</button></Link>
+        <Route path="*" element={<div className="container">
+          <h1>New user signed up!</h1>
+          <p>Let user with public key {keypair.publicKey.toBase58()} provide a credential</p>
+          <Link to={'/validate/' + keypair.publicKey.toBase58()}><button className="btn btn-primary">Redirect to Validation Oracle</button></Link>
           </div>}/>
       </Routes> 
       {/* {!session ? 
