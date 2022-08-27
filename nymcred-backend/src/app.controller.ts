@@ -9,15 +9,7 @@ interface Rsp<T> {
 
 @Controller('/api')
 export class AppController {
-  private userToken = '1234';
-  
-
   constructor(private readonly appService: AppService) {
-  }
-
-  @Post()
-  createUser(): string {
-    return this.userToken;
   }
 
   @Post('/validate/:userKey')
@@ -37,10 +29,5 @@ export class AppController {
     return { 
       data: await this.appService.submitSignedTransaction(body.signedTransaction)
     };
-  }
-
-  @Get(':userToken')
-  checkUser(): string {
-    return 'invalid';
   }
 }

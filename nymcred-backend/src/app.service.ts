@@ -39,27 +39,19 @@ export class AppService {
     signature: string): Promise<Buffer> {
     this.logger.log('Getting token account ' + splTokenAddress);
     const tokenProgram = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-    //const splAccount = await getAccount(this.mainNet, splTokenAddress, undefined, tokenProgram);
-    // if (!splAccount.owner.equals(tokenOwnerPublicKey)) {
-    //   this.logger.warn(tokenOwnerPublicKey.toBase58() + ' did not own token ' + splTokenAddress.toBase58());
-    //   throw new HttpException('Unauthenticated', 403);
-    // } 
+    const splAccount = await getAccount(this.mainNet, splTokenAddress, undefined, tokenProgram);
+    if (!splAccount.owner.equals(tokenOwnerPublicKey)) {
+      this.logger.warn(tokenOwnerPublicKey.toBase58() + ' did not own token ' + splTokenAddress.toBase58());
+      throw new HttpException('Unauthenticated', 403);
+    } 
 
-    // this.logger.log('Verifying signature ' + signature + ' for ' + splTokenAddress.toBase58() + ' with key ' + tokenOwnerPublicKey.toBase58());
-    // if (!nacl.sign.detached.verify(new TextEncoder().encode(splTokenAddress.toBase58()), Buffer.from(signature, 'base64'), tokenOwnerPublicKey.toBytes())) {
-    //   this.logger.warn('Failed to verify signature for token ' + splTokenAddress.toBase58());
-    //   throw new HttpException('Unauthenticated', 403);
-    // }
+    this.logger.log('Verifying signature ' + signature + ' for ' + splTokenAddress.toBase58() + ' with key ' + tokenOwnerPublicKey.toBase58());
+    if (!nacl.sign.detached.verify(new TextEncoder().encode(splTokenAddress.toBase58()), Buffer.from(signature, 'base64'), tokenOwnerPublicKey.toBytes())) {
+      this.logger.warn('Failed to verify signature for token ' + splTokenAddress.toBase58());
+      throw new HttpException('Unauthenticated', 403);
+    }
 
     const {blockhash, lastValidBlockHeight} = await this.connection.getLatestBlockhash();
-
-    // const provider = new AnchorProvider(
-    //   this.connection, this.signerKeypair, {preflightCommitment: 'recent'},
-    // );
-    
-    // const program = new Program(IDL, this.programId, provider);
-
-    // program.rpc.mintCredential()
 
     const keyData = Buffer.from(splTokenAddress.toBase58().substring(0, 4), 'utf-8');
     const sighash = new Uint8Array([136, 108, 131, 240, 163, 102, 204, 13, keyData.length, 0, 0, 0]);
