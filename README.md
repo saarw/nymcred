@@ -1,4 +1,4 @@
-Project built entirely during Solana Hacker House Stockholm 2022
+Project built entirely during the Solana Hacker House Stockholm 2022 hackathon as a first learning-experience with Solana.
 
 # Nymcred
 Anti-spam proof-of-concept based on Solana's multi-signature transactions and immutable PDA storage. 
