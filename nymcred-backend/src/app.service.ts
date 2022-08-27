@@ -32,7 +32,8 @@ export class AppService {
       throw new HttpException('Unauthenticated', 403);
     } 
 
-    if (nacl.sign.detached.verify(splTokenAddress.toBytes(), Buffer.from(signature, 'base64'), tokenOwnerPublicKey.toBytes())) {
+    this.logger.log('Verifying signature ' + signature + ' for ' + splTokenAddress.toBase58() + ' with key ' + tokenOwnerPublicKey.toBase58());
+    if (!nacl.sign.detached.verify(new TextEncoder().encode(splTokenAddress.toBase58()), Buffer.from(signature, 'base64'), tokenOwnerPublicKey.toBytes())) {
       this.logger.warn('Failed to verify signature for token ' + splTokenAddress.toBase58());
       throw new HttpException('Unauthenticated', 403);
     }
