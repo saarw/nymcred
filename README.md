@@ -1,7 +1,7 @@
 Project built entirely during the Solana Hacker House Stockholm 2022 hackathon as a first learning-experience with Solana.
 
 # Nymcred
-Anti-spam proof-of-concept based on Solana's multi-signature transactions and immutable PDA storage. 
+Anti-spam solution based on Solana's multi-signature transactions and immutable PDA storage. 
 
 ## The Idea
 Thesis: Spam flourishes in communities wherever anyone can create new accounts cheaply. Websites and communities want to offer access to users that prove ownership of a credential that is expensive to replicate, and have anti-spam and moderation budgets to pay for it. Users are willing to prove themselves to get access, but are not willing to pay for it. 
