@@ -18,19 +18,19 @@ Install Node and [Anchor](https://book.anchor-lang.com/getting_started/installat
 
 Clone the nymcred repo
 
-### In the nymcred-backend directory
+#### In the nymcred-backend directory
 - Run ```npm install``` to install the backend dependencies
 - Generate a Solana keypair used by the service to sign proofs and deploy the contract. Store the keypair file at
 ```nymcred-backend/src/nymcred-keypair.json```
 - Start the backend with ```npm start```
 
-### In the nymcred-frontend directory
+#### In the nymcred-frontend directory
 - Run ```npm install``` to install frontend dependencies.
 - Generate a Solana keypair for the user that wants to validate. Store the keypair file at
 ```nymcred-frontend/src/user-keypair.json```
 - Start the frontend with ```npm start```
 
-### In the nymcred-ws directory
+#### In the nymcred-ws directory
 - Run ```anchor build``` to build the smart contract
 - Set the backend's keypair as default in the Solana CLI ```solana config set --keypair nymcred-backend/src/nymcred-keypair.json```
 - Possibly airdrop the keypair some Solana ```solana airdrop 100```
